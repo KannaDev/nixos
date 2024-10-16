@@ -10,8 +10,8 @@
     disko.url = "github:nix-community/disko";
     impermanence.url = "github:nix-community/impermanence";
     nix-index-database.url = "github:nix-community/nix-index-database";
-    hyprland.url = "github:hyprwm/hyprland";
     niri.url = "github:sodiboo/niri-flake";
+    waybar.url = "github:Alexays/waybar";
   };
 
   outputs =
@@ -23,20 +23,23 @@
     }@inputs:
     let
       inherit (self) outputs;
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
     {
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
+      formatter.x86_64-linux = pkgs.nixfmt-rfc-style;
       nixosConfigurations = {
         willow-hazel = nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit inputs outputs;
           };
-          modules = [ ./hosts/willow-hazel/configuration.nix ];
+      modules = [
+        ./hosts/willow-hazel/configuration.nix
+      ];
         };
       };
       homeConfigurations = {
         hazel = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          inherit pkgs;
           extraSpecialArgs = {
             inherit inputs outputs;
           };
@@ -44,6 +47,17 @@
             ./homes/hazel/home.nix
           ];
         };
+      };
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          zellij
+          helix
+          nixd
+          nixfmt-rfc-style
+        ];
+        shellHook = ''
+          export EDITOR=hx
+        '';
       };
     };
 }

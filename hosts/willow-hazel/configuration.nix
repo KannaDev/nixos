@@ -12,10 +12,12 @@
 {
   imports = [
     ./hardware-configuration.nix
+    inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
     inputs.impermanence.nixosModules.impermanence
     inputs.nix-index-database.nixosModules.nix-index
     inputs.niri.nixosModules.niri
+    ./fonts.nix
   ];
 
   inherit ((import ./disko.nix { device = "/dev/nvme0n1"; })) disko;
@@ -64,10 +66,10 @@
       "/etc/NetworkManager/system-connections"
       "/etc/nixos"
       # if you want to save a root ssh key in /etc/ssh, then you will have to add something like this
-      # {
-      #   directory = "/etc/ssh";
-      #   mode = "600"; # might not be right idk 
-      # }
+      {
+        directory = "/etc/ssh";
+        mode = "600"; # might not be right idk
+      }
       {
         directory = "/var/lib/colord";
         user = "colord";
@@ -96,12 +98,14 @@
     };
     users.hazel = {
       directories = [
-        # "Downloads"
+        #".nix-profile"
         "Music"
         "Pictures"
         "Documents"
         "Projects"
         "Videos"
+        ".local/state/home-manager"
+        { directory = ".nixops"; mode = "0700"; }
         {
           directory = ".gnupg";
           mode = "0700";
@@ -262,14 +266,12 @@
       trusted-substituters = [
         "https://cache.nixos.org?priority=40"
         "https://nix-community.cachix.org?priority=42"
-        "https://hyprland.cachix.org?priority=43"
         "https://cache.garnix.io?priority=60"
       ];
 
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       ];
     };
@@ -284,14 +286,10 @@
     fstrim.enable = true;
   };
 
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  };
-
-  programs.niri = {
-    enable = true;
-  };
+  programs.niri.enable = true;
+#  services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.catppuccin.assertQt6Sddm = true;
+ # services.displayManager.sddm.wayland.enable = true;
 
   programs.nix-index-database.comma.enable = true;
   programs.command-not-found.enable = false;
@@ -354,16 +352,6 @@
     hazel = {
       isNormalUser = true;
       extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-      packages = with pkgs; [
-        firefox
-        tree
-        kitty
-        alacritty
-        (discord.override {
-          withOpenASAR = true;
-          withVencord = true;
-        })
-      ];
       initialPassword = "hazel";
     };
     root = {
@@ -378,8 +366,24 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    git
+    waybar
+    _1password-gui
+    bemenu
+    firefox
+    kitty
+    fastfetch
+    alacritty
+    (discord.override {
+      withOpenASAR = true;
+      withVencord = true;
+    })
+    prismlauncher
+    cider
+    vscode
+    kdePackages.kleopatra
+    termius
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -398,6 +402,14 @@
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 
+  system.activationScripts = {
+    # workaround with tmpfs as home and home-manager, since it not preserve
+    # ~/.nix-profile symlink after reboot.
+    profile-init.text =
+      ''
+        ln -sfn /home/hazel/.local/state/nix/profiles/profile /home/hazel/.nix-profile
+      '';
+  };
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.

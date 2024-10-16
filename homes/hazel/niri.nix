@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.niri.homeModules.niri
+    ./waybar.nix
   ];
   programs.niri = {
     package = pkgs.niri;
@@ -39,6 +40,7 @@
         };
       };
       spawn-at-startup = [
+#        { command = [ "${lib.getExe pkgs.waybar}" ]; }
         { command = [ "${lib.getExe pkgs.xwayland-satellite}" ]; }
       ];
       environment = {
@@ -51,24 +53,24 @@
         QT_QPA_PLATFORM = "wayland;xcb";
       };
       animations.enable = true;
-      # outputs = {
-      #   eDP-1 = {
-      #     mode = {
-      #       height = 1920;
-      #       width = 1080;
-      #       refresh = 60.428;
-      #     };
-      #     scale = 1;
-      #     transform = {
-      #       rotation = 0;
-      #       flipped = false;
-      #     };
-      #     position = {
-      #       x = 1280;
-      #       y = 0;
-      #     };
-      #   };
-      # };
+      outputs = {
+        eDP-1 = {
+          mode = {
+            height = 1920;
+            width = 1080;
+            refresh = 60.0;
+          };
+          scale = 1;
+          transform = {
+            rotation = 0;
+            flipped = false;
+          };
+          position = {
+            x = 0;
+            y = 0;
+          };
+        };
+      };
       layout = {
         gaps = 2;
         center-focused-column = "never";
@@ -96,7 +98,39 @@
         "Mod+T".action.spawn = "${lib.getExe config.programs.alacritty.package}";
         "Mod+Return".action.spawn = "${lib.getExe config.programs.alacritty.package}";
         "Mod+B".action.spawn = "${lib.getExe config.programs.firefox.package}";
-	"Mod+D".action.spawn = "discord";
+        "Mod+D".action.spawn =
+          if config.programs.bemenu.enable then
+            [
+              ''${config.programs.bemenu.package}/bin/bemenu-run''
+              "-p"
+              "run"
+              "-H"
+              "23"
+              "--fn"
+              ''"JetBrainsMono Nerd Font 10"''
+              "--fb"
+              ''#1e1e2e''
+              "--ff"
+              ''#cdd6f4''
+              "--nb"
+              ''#1e1e2e''
+              "--nf"
+              ''#cdd6f4''
+              "--tb"
+              ''#1e1e2e''
+              "--hb"
+              ''#1e1e2e''
+              "--tf"
+              ''#89b4fa''
+              "--hf"
+              ''#94e2d5''
+              "--af"
+              ''#cdd6f4''
+              "--ab"
+              ''#1e1e2e''
+            ]
+          else
+            [ ];
 
         # "Super+Alt+L".action.spawn = "swaylock";
 
@@ -340,4 +374,5 @@
       };
     };
   };
+  programs.bemenu.enable = true;
 }

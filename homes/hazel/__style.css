@@ -1,0 +1,220 @@
+/* Catppuccin Mocha palette*/
+
+@define-color foreground #cdd6f4;
+@define-color background #1e1e2e;
+@define-color alt_background #181825;
+@define-color accent #B4BEFE;
+
+@define-color black #45475a;
+@define-color red #f38ba8;
+@define-color orange #fab387;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color blue #89b4fa;
+@define-color magenta #f5c2e7;
+@define-color cyan #94e2d5;
+@define-color white #bac2de;
+@define-color lavender #B4BEFE;
+
+@define-color alt_black #585b70;
+@define-color alt_red #f38ba8;
+@define-color alt_green #a6e3a1;
+@define-color alt_yellow #f9e2af;
+@define-color alt_blue #89b4fa;
+@define-color alt_magenta #f5c2e7;
+@define-color alt_cyan #94e2d5;
+@define-color alt_white #a6adc8;
+
+* {
+  border: none;
+  font-family:
+    JetBrainsMono Nerd Font,
+    sans-serif;
+  font-size: 13px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+window#waybar {
+  /* background-color: rgba(18, 21, 29, 0.98); */
+  background-color: @background;
+  /* background-color: rgba(0, 0, 0, 0); */
+  color: @foreground;
+  opacity: 1;
+  transition-property: background-color;
+  transition-duration: 0.5s;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+#window {
+  margin-left: 4px;
+}
+
+#custom-rev {
+  margin-right: 4px;
+  color: @accent;
+}
+
+#custom-rev,
+#workspaces,
+#mode,
+#window,
+#cpu,
+#memory,
+#temperature,
+#custom-media,
+#custom-powermenu,
+#custom-fans,
+#custom-wmname,
+#clock,
+#idle_inhibitor,
+#language,
+#pulseaudio,
+#backlight,
+#battery,
+#network,
+#mpris,
+#tray {
+  padding-left: 3px;
+  padding-right: 3px;
+  background-color: @background;
+  background-clip: padding-box;
+}
+
+#workspaces button {
+  background-color: @alt-background;
+  color: @alt_black;
+  padding-left: 1px;
+  margin-left: 1px;
+  padding-right: 1px;
+  margin-right: 1px;
+}
+
+#workspaces button:hover {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+#workspaces button.active {
+  color: @accent;
+}
+
+#workspaces button.urgent {
+  color: @red;
+}
+
+#cpu {
+  color: @red;
+}
+
+#memory {
+  color: @orange;
+}
+
+#temperature {
+  color: @blue;
+}
+
+#temperature.critical {
+  background-color: @red;
+  color: @background;
+}
+
+#custom-media {
+  color: #c678dd;
+  color: @background;
+}
+
+#custom-fans {
+  color: @blue;
+}
+
+#clock {
+  color: @lavender;
+  margin-right: 3px;
+}
+
+#idle_inhibitor {
+  color: @foreground;
+}
+
+#language {
+  color: @blue;
+}
+
+#pulseaudio {
+  color: @green;
+}
+
+#pulseaudio.muted {
+  background-color: @red;
+  color: @background;
+}
+
+#backlight {
+  color: @yellow;
+}
+
+#battery {
+  color: @alt_green;
+}
+
+#battery.charging,
+#battery.plugged {
+  color: @alt_green;
+  background-color: @background;
+}
+
+@keyframes blink {
+  to {
+    background-color: @background;
+    color: @red;
+  }
+}
+
+#battery.critical:not(.charging) {
+  background-color: @red;
+  color: @background;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#network {
+  color: @blue;
+}
+
+#custom-wmname {
+  color: @accent;
+  background-color: @background;
+  font-size: 25px;
+}
+
+#network.disconnected {
+  color: @red;
+  background-color: @background;
+}
+
+#cava {
+  font-size: 10px;
+}
+
+.invisible {
+  font-size: 0px;
+  color: @background;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.mode-default {
+  color: @background;
+  background-color: @accent;
+}
