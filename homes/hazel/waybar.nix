@@ -8,13 +8,16 @@
 {
   programs.waybar = {
     enable = true;
-    systemd = {
-      enable = true;
-      target = lib.mkDefault "graphical-session.target";
-    };
-    package = inputs.waybar.packages.${pkgs.system}.waybar.overrideAttrs (oa: {
-      mesonFlags = (oa.mesonFlags or [ ]) ++ [ "-Dexperimental=true" ];
-    });
+#    systemd.enable = true;
+ # programs.waybar = {
+ #   enable = true;
+ #   systemd = {
+ #     enable = true;
+#      target = lib.mkDefault "graphical-session.target";
+#    };
+ #   package = inputs.waybar.packages.${pkgs.system}.waybar.overrideAttrs (oa: {
+  #    mesonFlags = (oa.mesonFlags or [ ]) ++ [ "-Dexperimental=true" ];
+   # });
     style = ./__style.css;
     settings =
       let

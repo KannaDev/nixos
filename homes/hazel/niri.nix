@@ -40,7 +40,7 @@
         };
       };
       spawn-at-startup = [
-#        { command = [ "${lib.getExe pkgs.waybar}" ]; }
+        { command = [ "${lib.getExe pkgs.waybar}" ]; }
         { command = [ "${lib.getExe pkgs.xwayland-satellite}" ]; }
       ];
       environment = {

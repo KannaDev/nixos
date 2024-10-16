@@ -5,6 +5,7 @@
 {
   inputs,
   lib,
+  outputs,
   pkgs,
   ...
 }:
@@ -16,7 +17,7 @@
     inputs.disko.nixosModules.disko
     inputs.impermanence.nixosModules.impermanence
     inputs.nix-index-database.nixosModules.nix-index
-    inputs.niri.nixosModules.niri
+    #inputs.niri.nixosModules.niri
     ./fonts.nix
   ];
 
@@ -54,6 +55,14 @@
     "dmask=0077"
     "umask=0077"
   ];
+
+  home-manager = {
+    extraSpecialArgs = {
+      inherit inputs outputs;
+    };
+    users.hazel = import ../../homes/hazel/home.nix;
+  };
+
   fileSystems."/persist".neededForBoot = true;
   environment.persistence."/persist" = {
     enable = true; # NB: Defaults to true, not needed
@@ -105,7 +114,10 @@
         "Projects"
         "Videos"
         ".local/state/home-manager"
-        { directory = ".nixops"; mode = "0700"; }
+        {
+          directory = ".nixops";
+          mode = "0700";
+        }
         {
           directory = ".gnupg";
           mode = "0700";
@@ -141,6 +153,7 @@
     "vt.default_red=0,243,166,249,137,245,148,186,88,243,166,249,137,245,148,166"
     "vt.default_grn=0,139,227,226,180,194,226,194,91,139,227,226,180,194,226,173"
     "vt.default_blu=0,168,161,175,250,231,213,222,112,168,161,175,250,231,213,200"
+    "i915.force_probe=8086:3ea0"
   ];
 
   zramSwap.enable = true;
@@ -157,6 +170,7 @@
 
   services.xserver.videoDrivers = [ "intel" ];
 
+  # enable auto-cpufreq and thermald
   services.auto-cpufreq = {
     enable = true;
     settings = {
@@ -223,6 +237,13 @@
     allowUnfree = true;
   };
 
+  hardware.graphics = { # hardware.opengl in 24.05
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-sdk # or intel-media-sdk for QSV
+    ];
+  };
+
   nix = {
     nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
@@ -276,9 +297,7 @@
       ];
     };
 
-    registry = with inputs; {
-      nixpkgs.flake = nixpkgs;
-    };
+    registry.nixpkgs.flake = inputs.nixpkgs;
   };
 
   services = {
@@ -286,10 +305,9 @@
     fstrim.enable = true;
   };
 
-  programs.niri.enable = true;
-#  services.displayManager.sddm.enable = true;
+  #services.displayManager.sddm.enable = true;
   # services.displayManager.sddm.catppuccin.assertQt6Sddm = true;
- # services.displayManager.sddm.wayland.enable = true;
+  #services.displayManager.sddm.wayland.enable = true;
 
   programs.nix-index-database.comma.enable = true;
   programs.command-not-found.enable = false;
@@ -300,11 +318,10 @@
 
   services.openssh = {
     enable = true;
-    # require public key authentication for better security
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "yes";
+      PermitRootLogin = "yes"; # Temporary while doing testing :3
     };
   };
 
@@ -381,18 +398,25 @@
     })
     prismlauncher
     cider
+    steam
     vscode
     kdePackages.kleopatra
     termius
   ];
 
+ # environment.sessionVariables = {
+#    XDG_CONFIG_HOME = "$HOME/etc";
+  #  XDG_DATA_HOME   = "$HOME/var/lib";
+ #   XDG_CACHE_HOME  = "$HOME/var/cache";
+#  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   # List services that you want to enable:
 
@@ -402,14 +426,6 @@
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 
-  system.activationScripts = {
-    # workaround with tmpfs as home and home-manager, since it not preserve
-    # ~/.nix-profile symlink after reboot.
-    profile-init.text =
-      ''
-        ln -sfn /home/hazel/.local/state/nix/profiles/profile /home/hazel/.nix-profile
-      '';
-  };
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
@@ -433,5 +449,4 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "24.05"; # Did you read the comment?
-
 }
