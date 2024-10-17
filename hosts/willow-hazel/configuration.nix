@@ -1,6 +1,4 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+# Information can be found at the bottom of this file, with notes added as well.
 
 {
   inputs,
@@ -74,7 +72,6 @@
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
       "/etc/nixos"
-      # if you want to save a root ssh key in /etc/ssh, then you will have to add something like this
       {
         directory = "/etc/ssh";
         mode = "600"; # might not be right idk
@@ -150,10 +147,10 @@
   # willow tweaks:
   # catppuccin boot :3
   boot.kernelParams = [
-    "vt.default_red=0,243,166,249,137,245,148,186,88,243,166,249,137,245,148,166"
-    "vt.default_grn=0,139,227,226,180,194,226,194,91,139,227,226,180,194,226,173"
-    "vt.default_blu=0,168,161,175,250,231,213,222,112,168,161,175,250,231,213,200"
-    "i915.force_probe=8086:3ea0"
+    "vt.default_red=0,243,166,249,137,245,148,186,88,243,166,249,137,245,148,166" # catppuccin boot :3
+    "vt.default_grn=0,139,227,226,180,194,226,194,91,139,227,226,180,194,226,173" # catppuccin boot :3
+    "vt.default_blu=0,168,161,175,250,231,213,222,112,168,161,175,250,231,213,200" # catppuccin boot :3
+    "i915.force_probe=8086:3ea0" # Intel UHD620
   ];
 
   zramSwap.enable = true;
@@ -305,9 +302,7 @@
     fstrim.enable = true;
   };
 
-  #services.displayManager.sddm.enable = true;
-  # services.displayManager.sddm.catppuccin.assertQt6Sddm = true;
-  #services.displayManager.sddm.wayland.enable = true;
+
 
   programs.nix-index-database.comma.enable = true;
   programs.command-not-found.enable = false;
@@ -325,16 +320,10 @@
     };
   };
 
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   # Set your time zone.
   time.timeZone = "Europe/London";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_GB.UTF-8";
@@ -344,26 +333,13 @@
     useXkbConfig = true; # use xkb.options in tty.
   };
 
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
 
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
-  # hardware.pulseaudio.enable = true;
-  # OR
   services.pipewire = {
     enable = true;
     pulse.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
+
 
   users.users = {
     hazel = {
@@ -380,36 +356,6 @@
     };
   };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    wget
-    git
-    waybar
-    _1password-gui
-    bemenu
-    firefox
-    kitty
-    fastfetch
-    alacritty
-    (discord.override {
-      withOpenASAR = true;
-      withVencord = true;
-    })
-    prismlauncher
-    cider
-    steam
-    vscode
-    kdePackages.kleopatra
-    termius
-  ];
-
- # environment.sessionVariables = {
-#    XDG_CONFIG_HOME = "$HOME/etc";
-  #  XDG_DATA_HOME   = "$HOME/var/lib";
- #   XDG_CACHE_HOME  = "$HOME/var/cache";
-#  };
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -420,11 +366,69 @@
 
   # List services that you want to enable:
 
+  networking.firewall.enable = true;
+  system.stateVersion = "24.05";
+}
+  ## -- Redacted Sections that can be added (if needed) --
+
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  # environment.systemPackages = with pkgs; [
+  #   wget
+  #   git
+  #   waybar
+  #   _1password-gui
+  #   bemenu
+  #   firefox
+  #   kitty
+  #   fastfetch
+  #   alacritty
+  #   (discord.override {
+  #     withOpenASAR = true;
+  #     withVencord = true;
+  #   })
+  #   prismlauncher
+  #   cider
+  #   steam
+  #   vscode
+  #   kdePackages.kleopatra
+  #   termius
+  # ];
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = true;
+
+ # environment.sessionVariables = {
+#    XDG_CONFIG_HOME = "$HOME/etc";
+  #  XDG_DATA_HOME   = "$HOME/var/lib";
+ #   XDG_CACHE_HOME  = "$HOME/var/cache";
+#  };
+
+  # Enable the X11 windowing system.
+  # services.xserver.enable = true;
+
+  # Configure keymap in X11
+  # services.xserver.xkb.layout = "us";
+  # services.xserver.xkb.options = "eurosign:e,caps:escape";
+
+  # Enable CUPS to print documents.
+  # services.printing.enable = true;
+
+  # Enable sound.
+  # hardware.pulseaudio.enable = true;
+
+  # Enable touchpad support (enabled default in most desktopManager).
+  # services.libinput.enable = true;
+
+  # Configure network proxy if necessary
+  # networking.proxy.default = "http://user:password@proxy:port/";
+  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+  #services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.catppuccin.assertQt6Sddm = true;
+  #services.displayManager.sddm.wayland.enable = true;
+# -- Notes --
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -448,5 +452,3 @@
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.05"; # Did you read the comment?
-}

@@ -8,16 +8,6 @@
 {
   programs.waybar = {
     enable = true;
-#    systemd.enable = true;
- # programs.waybar = {
- #   enable = true;
- #   systemd = {
- #     enable = true;
-#      target = lib.mkDefault "graphical-session.target";
-#    };
- #   package = inputs.waybar.packages.${pkgs.system}.waybar.overrideAttrs (oa: {
-  #    mesonFlags = (oa.mesonFlags or [ ]) ++ [ "-Dexperimental=true" ];
-   # });
     style = ./__style.css;
     settings =
       let
@@ -254,3 +244,18 @@
       };
   };
 }
+
+# Redacted Section
+
+#    systemd.enable = true;
+ # programs.waybar = {
+ #   enable = true;
+ #   systemd = {
+ #     enable = true;
+#      target = lib.mkDefault "graphical-session.target";
+#    };
+ #   package = inputs.waybar.packages.${pkgs.system}.waybar.overrideAttrs (oa: {
+  #    mesonFlags = (oa.mesonFlags or [ ]) ++ [ "-Dexperimental=true" ];
+   # });
+
+# This section above is redacted, due to niri itself starting waybar. And if using the systemd.enable = true; it will cause a conflict with niri where on the second launch of niri-session two bars will appear.
